@@ -16,6 +16,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
+    private static final String KEY_IS_CHEATER = "isCheater";
     private static final int REQUEST_CODE_CHEAT = 0;
 
     private Button mTrueButton;
@@ -33,7 +34,7 @@ public class QuizActivity extends AppCompatActivity {
     };
 
     private int mCurrentIndex = 0;
-    private boolean mIsCheater;
+    private boolean mIsCheater = false;
 
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
@@ -45,9 +46,14 @@ public class QuizActivity extends AppCompatActivity {
 
         int messageResId = 0;
 
-        if (mIsCheater) {
+
+        if (mQuestionBank[mCurrentIndex].isCheated()) {
             messageResId = R.string.judgment_toast;
-        } else {
+        }
+//        if (mIsCheater) {
+//            messageResId = R.string.judgment_toast;
+//        }
+        else {
             if (userPressedTrue == answerIsTrue) {
                 messageResId = R.string.correct_toast;
             } else {
@@ -118,6 +124,7 @@ public class QuizActivity extends AppCompatActivity {
 //            Log.i(TAG, "onCreate if statement: savedInstanceState does exist");
             // it exists
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mIsCheater = savedInstanceState.getBoolean(KEY_IS_CHEATER, false);
         }
 
         updateQuestion();
@@ -134,14 +141,20 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
+
+            // update Qestion cheat
+            mQuestionBank[mCurrentIndex].setCheated(mIsCheater);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
+
         Log.i(TAG, "onSaveInstanceState");
+
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putBoolean(KEY_IS_CHEATER, mIsCheater);
     }
 
     @Override

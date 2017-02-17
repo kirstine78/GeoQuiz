@@ -59,7 +59,7 @@ public class CheatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mCheatHappened = true;
                 updateCheatAnswer(mAnswerIsTrue);
-                
+
 //                if (mAnswerIsTrue) {
 //                    mAnswerTextView.setText(R.string.true_button);
 //                } else {
