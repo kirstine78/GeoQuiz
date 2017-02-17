@@ -15,10 +15,12 @@ public class CheatActivity extends AppCompatActivity {
     private static final String EXTRA_ANSWER_SHOWN = "com.bignerdranch.android.geoquiz.answer_shown";
 
     private static final String TAG = "CheatActivity";
+    private static final String KEY_CHEAT_HAPPENED = "cheatHappened";
 
     private boolean mAnswerIsTrue;
     private TextView mAnswerTextView;
     private Button mShowAnswer;
+    private boolean mCheatHappened;
 
 
     public static Intent newIntent(Context packageContext, boolean answerIsTrue) {
@@ -29,6 +31,14 @@ public class CheatActivity extends AppCompatActivity {
 
     public static boolean wasAnswerShown(Intent result) {
         return result.getBooleanExtra(EXTRA_ANSWER_SHOWN, false);
+    }
+
+    public void updateCheatAnswer(boolean answerIsTrue) {
+        if (answerIsTrue) {
+            mAnswerTextView.setText(R.string.true_button);
+        } else {
+            mAnswerTextView.setText(R.string.false_button);
+        }
     }
 
     @Override
@@ -47,21 +57,41 @@ public class CheatActivity extends AppCompatActivity {
         mShowAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mAnswerIsTrue) {
-                    mAnswerTextView.setText(R.string.true_button);
-                } else {
-                    mAnswerTextView.setText(R.string.false_button);
-                }
+                mCheatHappened = true;
+                updateCheatAnswer(mAnswerIsTrue);
+                
+//                if (mAnswerIsTrue) {
+//                    mAnswerTextView.setText(R.string.true_button);
+//                } else {
+//                    mAnswerTextView.setText(R.string.false_button);
+//                }
+
                 // answer is shown so call method
-                setAnswerShownResult(true);
+                setAnswerShownResult(mCheatHappened);
             }
         });
+
+        // check for saved instance state for mCurrentIndex
+        if (savedInstanceState != null) {
+            Log.i(TAG, "onCreate if statement: savedInstanceState does exist");
+            // it exists
+            mCheatHappened = savedInstanceState.getBoolean(KEY_CHEAT_HAPPENED, false);
+            setAnswerShownResult(mCheatHappened);
+            updateCheatAnswer(mAnswerIsTrue);
+        }
     }
 
     private void setAnswerShownResult(boolean isAnswerShown) {
         Intent data = new Intent();
         data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
         setResult(RESULT_OK, data);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putBoolean(KEY_CHEAT_HAPPENED, mCheatHappened);
     }
 
     @Override
