@@ -14,10 +14,10 @@ import android.widget.Toast;
 
 public class QuizActivity extends AppCompatActivity {
 
-    private static final String TAG = "QuizActivity";
-    private static final String KEY_INDEX = "index";
+    private static final String TAG = "QuizActivity";  //
+    private static final String KEY_INDEX = "index";  //
     private static final String KEY_IS_CHEATER = "isCheater";
-    private static final int REQUEST_CODE_CHEAT = 0;
+    private static final int REQUEST_CODE_CHEAT = 0;  //
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -34,7 +34,9 @@ public class QuizActivity extends AppCompatActivity {
     };
 
     private int mCurrentIndex = 0;
-    private boolean mIsCheater = false;
+    private boolean mIsCheater;  //
+
+//    private boolean[] mCheatBank = {false, false, false, false, false};
 
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
@@ -46,13 +48,9 @@ public class QuizActivity extends AppCompatActivity {
 
         int messageResId = 0;
 
-
-        if (mQuestionBank[mCurrentIndex].isCheated()) {
+        if (mIsCheater) {
             messageResId = R.string.judgment_toast;
         }
-//        if (mIsCheater) {
-//            messageResId = R.string.judgment_toast;
-//        }
         else {
             if (userPressedTrue == answerIsTrue) {
                 messageResId = R.string.correct_toast;
@@ -106,16 +104,15 @@ public class QuizActivity extends AppCompatActivity {
         mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent i = new Intent(QuizActivity.this, CheatActivity.class);
                 // start CheatActivity
-                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();  //
 
                 // use the static method to create an properly configured Intent with extras that
                 // CheatActivity will need.
 
                 Intent i = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
 //                startActivity(i);
-                startActivityForResult(i, REQUEST_CODE_CHEAT);
+                startActivityForResult(i, REQUEST_CODE_CHEAT);  //
             }
         });
 
@@ -141,9 +138,6 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
-
-            // update Qestion cheat
-            mQuestionBank[mCurrentIndex].setCheated(mIsCheater);
         }
     }
 
